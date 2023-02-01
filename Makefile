@@ -7,4 +7,7 @@ build:
 test:
 	$(GOCMD) test ./... -v
 
-.PHONY: build test
+run:
+	$(GOCMD) run ./...
+
+.PHONY: build test run

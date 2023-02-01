@@ -1,23 +1,17 @@
 # gophercon-cli
 
-Tutorial: 
-
 ## 1. Create initial functionality
 1. Initialize `go.mod`: `go mod init github.com/dfreilich/gophercon-cli`
 2. Create a cmd directory: `mkdir -p cmd/`
 3. Get cobra: `go get github.com/spf13/cobra`
 4. Create a file in the `cmd/` directory with the contents: 
 ```go
-var (
-	Version = "0.0.1"
-)
-
 func NewJokerCmd() *cobra.Command {
 	return &cobra.Command{
 		Use:     "joker",
 		Aliases: []string{"joke"},
 		Short:   "This returns GPT3 Dad jokes!",
-		Version: Version,
+		Version: "0.0.1",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			fmt.Println("Hello Gophercon!")
 			return nil
@@ -65,9 +59,11 @@ func TestNewJokerCmd(t *testing.T) {
 
 ## 2. Sprinkle Some AI
 8. Get library for `ChatGPT`: `go get github.com/sashabaranov/go-gpt3`
+9. Make `API Key` at https://beta.openai.com/account/api-keys and set it as an environment variable `export OPEN_AI_KEY=MY_KEY`
 9. Use ChatGPT in `root.go`: 
 ```go
-c := gogpt.NewClient(apiKey)
+// Note: For this, you need to make an API KEY at https://beta.openai.com/account/api-keys
+c := gogpt.NewClient(os.Getenv("OPEN_AI_KEY"))
 ctx := context.Background()
 
 req := gogpt.CompletionRequest{
@@ -116,7 +112,7 @@ func NewJokerCmd(asker Asker) *cobra.Command {
 ```
 17. Change the main to se it: 
 ```go
-	c := gogpt.NewClient(apiKey)
+	c := gogpt.NewClient(os.Getenv("OPEN_AI_KEY"))
 	root := cmd.NewJokerCmd(c)
 ```
 18. Change the test to use it:
