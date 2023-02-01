@@ -134,4 +134,4 @@ func TestNewJokerCmd(t *testing.T) {
 ```
 
 ## 5. Run
-[![asciicast](https://asciinema.org/a/QmvzLbsePkHVLvmy4CB1daq7m.svg?speed=2&autoplay=1)](https://asciinema.org/a/QmvzLbsePkHVLvmy4CB1daq7m?speed=2&autoplay=1)
+![asciicast](test_output.gif)
