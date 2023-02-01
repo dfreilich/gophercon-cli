@@ -1,6 +1,8 @@
 # gophercon-cli
 
 Tutorial: 
+
+## 1. Create initial functionality
 1. Initialize `go.mod`: `go mod init github.com/dfreilich/gophercon-cli`
 2. Create a cmd directory: `mkdir -p cmd/`
 3. Get cobra: `go get github.com/spf13/cobra`
@@ -14,8 +16,7 @@ func NewJokerCmd() *cobra.Command {
 	return &cobra.Command{
 		Use:     "joker",
 		Aliases: []string{"joke"},
-		Short:   "Joker!",
-		Long:    "This returns ChatGPT jokes!",
+		Short:   "This returns GPT3 Dad jokes!",
 		Version: Version,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			fmt.Println("Hello Gophercon!")
@@ -37,7 +38,7 @@ func main() {
 6. Create a `Makefile` with the contents:
 ```
 GOCMD?=go
-NAME?=mycli
+NAME?=joker
 
 build:
 	$(GOCMD) build -o $(NAME)
@@ -45,10 +46,26 @@ build:
 test:
 	$(GOCMD) test ./... -v
 
-.PHONY: build test
+run:
+	$(GOCMD) run ./...
+
+.PHONY: build test run
 ```
-7. Get library for `ChatGPT`: `go get github.com/sashabaranov/go-gpt3`
-8. Use ChatGPT in `root.go`: 
+7. Write initial test in `root_test.go`:
+```go
+func TestNewJokerCmd(t *testing.T) {
+	cmd := NewJokerCmd()
+	buf := &bytes.Buffer{}
+	cmd.SetOut(buf)
+	err := cmd.Execute()
+	require.NoError(t, err)
+	require.NotEmpty(t, buf.String())
+}
+```
+
+## 2. Sprinkle Some AI
+8. Get library for `ChatGPT`: `go get github.com/sashabaranov/go-gpt3`
+9. Use ChatGPT in `root.go`: 
 ```go
 c := gogpt.NewClient(apiKey)
 ctx := context.Background()
@@ -67,6 +84,8 @@ if err != nil {
     return err
 }
 ```
+
+## 3. Add Some Style
 10. Get a nice rendering library: `go get github.com/charmbracelet/lipgloss`
 11. Make the output :sparkles: fabulous :sparkles: :
 ```go
@@ -78,3 +97,45 @@ style := lipgloss.NewStyle().
 
 fmt.Println(style.Render(strings.TrimSpace(resp.Choices[0].Text)))
 ```
+
+## 4. Add Mocking/Interface
+12. Go get assertion library: `go get github.com/stretchr/testify/require`
+14. Install `mockgen` : `go install github.com/golang/mock/mockgen@v1.6.0` and `go get github.com/golang/mock/mockgen/model`
+15. Create the interface and annotations:
+```go
+//go:generate mockgen -package mocks -destination ../test/mocks/mock_asker.go github.com/dfreilich/gophercon-cli/cmd Asker
+type Asker interface {
+	CreateCompletion(ctx context.Context, request gogpt.CompletionRequest) (response gogpt.CompletionResponse, err error)
+}
+```
+16. Change the Command to use it: 
+```go
+func NewJokerCmd(asker Asker) *cobra.Command {
+...
+    resp, err := asker.CreateCompletion(ctx, req)
+```
+17. Change the main to se it: 
+```go
+	c := gogpt.NewClient(apiKey)
+	root := cmd.NewJokerCmd(c)
+```
+18. Change the test to use it:
+```go
+func TestNewJokerCmd(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	testActor := mocks.NewMockAsker(ctrl)
+	cmd := NewJokerCmd(testActor)
+	testActor.EXPECT().CreateCompletion(gomock.Any(), gomock.Any()).Return(gogpt.CompletionResponse{
+		Choices: []gogpt.CompletionChoice{{Text: "Some funny joke!"}},
+	}, nil)
+	buf := &bytes.Buffer{}
+	cmd.SetOut(buf)
+	err := cmd.Execute()
+	require.NoError(t, err)
+	require.NotEmpty(t, buf.String())
+	require.Contains(t, buf.String(), "Some funny joke!")
+}
+```
+
+## 5. Run
+[![asciicast](./test_output.gif)](./test_output.gif)
