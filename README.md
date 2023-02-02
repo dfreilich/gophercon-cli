@@ -88,8 +88,8 @@ if err != nil {
 style := lipgloss.NewStyle().
     Bold(true).
     BorderStyle(lipgloss.RoundedBorder()).
-    BorderForeground(lipgloss.Color("228")).
-    Foreground(lipgloss.Color("12"))
+    BorderForeground(lipgloss.Color("12")). // Light Blue
+    Foreground(lipgloss.Color("5")) // Magenta
 
 fmt.Println(style.Render(strings.TrimSpace(resp.Choices[0].Text)))
 ```
