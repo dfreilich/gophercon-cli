@@ -1,5 +1,7 @@
 # gophercon-cli
 
+> If you encounter any issues through this tutorial, you can see the [add-joker branch](https://github.com/dfreilich/gophercon-cli/tree/add-joker) for an implementation
+
 ## 1. Create initial functionality
 1. Initialize `go.mod`: `go mod init github.com/dfreilich/gophercon-cli`
 2. Create a cmd directory: `mkdir -p cmd/`
@@ -135,3 +137,8 @@ func TestNewJokerCmd(t *testing.T) {
 
 ## 5. Run
 ![asciicast](test_output.gif)
+
+## 6. Next Steps
+For more, check out the [Cobra documentation here](https://github.com/spf13/cobra/blob/main/user_guide.md), and look at how some major CLIs are using it.
+
+One project you can check out is the Cloud Native Buildpacks pack CLI. You can see how they generate the [Root Command here](https://github.com/buildpacks/pack/blob/main/cmd/cmd.go), [define subcommands here](https://github.com/buildpacks/pack/tree/main/internal/commands), and create an [interface of their client here](https://github.com/buildpacks/pack/blob/61dc8c78f6033819110f43533117c5c895bc2bbc/internal/commands/commands.go#L19)
