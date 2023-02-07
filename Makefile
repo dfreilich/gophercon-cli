@@ -10,4 +10,7 @@ test:
 run:
 	$(GOCMD) run ./...
 
-.PHONY: build test run
+clean:
+	git reset . && git checkout . && git clean -ffd
+
+.PHONY: build clean test run
