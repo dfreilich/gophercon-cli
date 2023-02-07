@@ -58,9 +58,9 @@ func TestNewJokerCmd(t *testing.T) {
 ```
 
 ## 2. Sprinkle Some AI
-8. Get library for `ChatGPT`: `go get github.com/sashabaranov/go-gpt3`
-9. Make `API Key` at https://beta.openai.com/account/api-keys and set it as an environment variable `export OPEN_AI_KEY=MY_KEY`
-9. Use ChatGPT in `root.go`: 
+8. Get [library](https://github.com/sashabaranov/go-gpt3) for `GPT3`: `go get github.com/sashabaranov/go-gpt3`
+9. Make `API Key` [here](https://beta.openai.com/account/api-keys) and set it as an environment variable `export OPEN_AI_KEY=MY_KEY`
+9. Use GPT3 in `root.go`:
 ```go
 // Note: For this, you need to make an API KEY at https://beta.openai.com/account/api-keys
 c := gogpt.NewClient(os.Getenv("OPEN_AI_KEY"))
